@@ -1,4 +1,4 @@
-
+import {renderData} from './render.js';
 function constructObjectProxy(vm, obj, namespace) {
   let proxyObj = {};
   for (let prop in obj) {
@@ -9,6 +9,8 @@ function constructObjectProxy(vm, obj, namespace) {
       },
       set: function(value) {
         obj[prop] = value;
+        console.log(getNameSpace(namespace, prop))
+        renderData(vm, getNameSpace(namespace, prop));
       }
     });
     Object.defineProperty(vm, prop, {
@@ -18,6 +20,8 @@ function constructObjectProxy(vm, obj, namespace) {
       },
       set: (value) => {
         obj[prop] = value;
+        console.log(getNameSpace(namespace, prop))
+        renderData(vm, getNameSpace(namespace, prop));
       }
     })
     if (obj[prop] instanceof Object) {
@@ -35,6 +39,7 @@ function defArrayFunc(arr, funcName, namespace, vm) {
     value: function(...args) {
       console.log('this: ', this);
       const result = arrayProto[funcName].apply(this, args); // 这里this应该指调用方法的数组
+      renderData(vm, getNameSpace(namespace, ""));
       return result;
     }
   });

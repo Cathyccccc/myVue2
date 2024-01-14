@@ -1,4 +1,5 @@
 import VNode from '../vdom/vnode.js';
+import { prepareRender } from './render.js';
 
 export function initMount(MyVue2) {
   MyVue2.prototype.$mount = function(el) {
@@ -10,7 +11,10 @@ export function initMount(MyVue2) {
 
 export function mount(vm, el) {
   // console.log('mount: ', vm, el);
+  // 构建虚拟 DOM 树
   vm._vnode = constructVNode(vm, el, null); // 实例，当前节点，父节点
+  // 预备渲染（建立映射关系）
+  prepareRender(vm, vm._vnode);
 }
 
 function constructVNode(vm, elm, parent) {
@@ -21,7 +25,7 @@ function constructVNode(vm, elm, parent) {
   let nodeType = elm.nodeType;
   let key = null;
   const vnode = new VNode(tag, elm, children, text, data, parent, nodeType, key);
-  const childs = el.childNodes;
+  const childs = elm.childNodes;
   for(let i = 0; i < childs.length; i++) {
     let childNode = constructVNode(vm, childs[i], vnode);
     if (childNode instanceof VNode) {
