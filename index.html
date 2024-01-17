@@ -10,6 +10,8 @@
   <div id="app">
     <div>{{content}}123{{description}}</div>
     <div>{{description}}</div>
+    <input type="text" v-model="value" placeholder="请输入...">
+    <span>{{value}}</span>
   </div>
   <script type="module">
     import MyVue2 from './core/main.js';
@@ -17,7 +19,8 @@
       el: 'app',
       data: {
         content: 'hello',
-        description: 'star say hello'
+        description: 'star say hello',
+        value: '内容'
       }
     });
   </script>

@@ -9,7 +9,7 @@ function constructObjectProxy(vm, obj, namespace) {
       },
       set: function(value) {
         obj[prop] = value;
-        console.log(getNameSpace(namespace, prop))
+        // console.log(getNameSpace(namespace, prop))
         renderData(vm, getNameSpace(namespace, prop));
       }
     });
@@ -20,7 +20,7 @@ function constructObjectProxy(vm, obj, namespace) {
       },
       set: (value) => {
         obj[prop] = value;
-        console.log(getNameSpace(namespace, prop))
+        // console.log(getNameSpace(namespace, prop))
         renderData(vm, getNameSpace(namespace, prop));
       }
     })

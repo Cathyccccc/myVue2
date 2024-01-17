@@ -34,7 +34,19 @@ export function renderNode(vm, VNode) {
       }
       VNode.elm.nodeValue = result;
     }
-  } else if (VNode.nodeType === 1) {
+  } else if (VNode.nodeType === 1 && VNode.tag === 'INPUT') {
+    console.log('input值重新渲染')
+    const templates = getNode2Templates(VNode);
+    if(templates) {
+      for(let i = 0; i < templates.length; i++) {
+      // 根据 _data 的数据设置真实值，所以这里不是使用setValue
+        const templateValue = getTemplateValue([vm._data, VNode.env], templates[i]);
+        if (templateValue) {
+          VNode.elm.value = templateValue;
+        }
+      }
+    }
+  } else {
     const childs = VNode.children;
     for(let i = 0; i < childs.length; i++) {
       renderNode(vm, childs[i]);
@@ -51,6 +63,7 @@ export function prepareRender(vm, VNode) {
     // 找出文本节点是否包含模板字符串（正则）
     analysisTemplate(VNode);
   }
+  analysisAttribute(VNode);
   // 其他类型的节点
   if (VNode.nodeType === 1) {
     // 当前节点为元素节点（标签）
@@ -113,5 +126,14 @@ function getNode2Templates(VNode) {
   return node2TempMap.get(VNode);
 }
 
+function analysisAttribute(VNode) {
+  if (VNode.nodeType !== 1) return;
+  const attrNames = VNode.elm.getAttributeNames();
+  if(attrNames.indexOf('v-model') > -1) { // 当前标签包含 v-model 属性
+    // 设置 属性值字符串（这里 _data 中为 value） 和 VNode 的映射
+    setTemplate2NodeMap(VNode, VNode.elm.getAttribute('v-model'));
+    setNode2TemplateMap(VNode, VNode.elm.getAttribute('v-model'));
+  }
+}
 
 export default renderMixin;
