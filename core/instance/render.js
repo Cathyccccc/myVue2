@@ -11,7 +11,6 @@ function renderMixin(MyVue2) {
 }
 
 export function renderData(vm, dataNamespace) {
-  console.log(temp2NodeMap)
   let vnodes = temp2NodeMap.get(dataNamespace);
   console.log(vnodes)
   if (vnodes !== null) {
@@ -55,7 +54,7 @@ export function renderNode(vm, VNode) {
 }
 
 export function prepareRender(vm, VNode) {
-  // console.log(vm, VNode);
+  // console.log(vm, VNode, VNode.nodeType);
   if (VNode === null) return;
   // 判断当前节点是文本节点还是其他类型的节点
   if (VNode.nodeType === 3) {
@@ -63,16 +62,21 @@ export function prepareRender(vm, VNode) {
     // 找出文本节点是否包含模板字符串（正则）
     analysisTemplate(VNode);
   }
+  if (VNode.nodeType === 0) {
+    // 当前节点为 v-for 重构的虚拟节点
+    setNode2TemplateMap(VNode, VNode.data);
+    setTemplate2NodeMap(VNode, VNode.data);
+    // console.log('prepareRender', node2TempMap, temp2NodeMap)
+    // 这里当ul中使用两个连续非嵌套的v-for时有问题，template只对应了一个v-for的vnode？？？
+  }
   analysisAttribute(VNode);
   // 其他类型的节点
-  if (VNode.nodeType === 1) {
     // 当前节点为元素节点（标签）
     // 判断当前节点下是否还有文本节点（递归）
     const childs = VNode.children;
     for(let i = 0; i < childs.length; i++) {
       prepareRender(vm, childs[i]);
     }
-  }
 }
 
 function analysisTemplate(VNode) {
@@ -118,12 +122,24 @@ function setNode2TemplateMap(VNode, templateName) {
 function getTemplateValue(objs, templateName) {
   for(let i = 0; i < objs.length; i++) {
     const value = getValue(objs[i], templateName);
-    return value;
+    if (value) {
+      return value;
+    }
   }
+  return null;
 }
 
 function getNode2Templates(VNode) {
   return node2TempMap.get(VNode);
+}
+
+export function getTemplate2Nodes(templateName) {
+  return temp2NodeMap.get(templateName);
+}
+
+export function clearMap() {
+  temp2NodeMap.clear();
+  node2TempMap.clear();
 }
 
 function analysisAttribute(VNode) {

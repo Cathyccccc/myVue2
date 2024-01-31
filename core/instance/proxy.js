@@ -1,4 +1,5 @@
 import {renderData} from './render.js';
+import {rebuild} from './mount.js';
 function constructObjectProxy(vm, obj, namespace) {
   let proxyObj = {};
   for (let prop in obj) {
@@ -9,8 +10,9 @@ function constructObjectProxy(vm, obj, namespace) {
       },
       set: function(value) {
         obj[prop] = value;
-        // console.log(getNameSpace(namespace, prop))
-        renderData(vm, getNameSpace(namespace, prop));
+        console.log(prop)
+        // 这里碰到 v-for 时，数组没有相应的 prop，只有 length 属性
+        // renderData(vm, getNameSpace(namespace, prop));
       }
     });
     Object.defineProperty(vm, prop, {
@@ -33,12 +35,14 @@ function constructObjectProxy(vm, obj, namespace) {
 
 const arrayProto = Array.prototype;
 function defArrayFunc(arr, funcName, namespace, vm) {
-  Object.defineProperty({
+  Object.defineProperty(arr, funcName, {
     enumerable: true,
     writable: true,
     value: function(...args) {
-      console.log('this: ', this);
+      // console.log('this: ', this);
       const result = arrayProto[funcName].apply(this, args); // 这里this应该指调用方法的数组
+      rebuild(vm, getNameSpace(namespace, ""));
+      console.log('render')
       renderData(vm, getNameSpace(namespace, ""));
       return result;
     }
@@ -60,10 +64,10 @@ function proxyArr(vm, arr, namespace) {
     shift: () => {},
     unshift: () => {},
   };
-  defArrayFunc.call(vm, obj, 'push', namespace, vm);
-  defArrayFunc.call(vm, obj, 'pop', namespace, vm);
-  defArrayFunc.call(vm, obj, 'shift', namespace, vm);
-  defArrayFunc.call(vm, obj, 'unshift', namespace, vm);
+  defArrayFunc.call(vm, prototype, 'push', namespace, vm);
+  defArrayFunc.call(vm, prototype, 'pop', namespace, vm);
+  defArrayFunc.call(vm, prototype, 'shift', namespace, vm);
+  defArrayFunc.call(vm, prototype, 'unshift', namespace, vm);
   arr.__proto__ = prototype;
   return arr;
 }
@@ -77,8 +81,9 @@ export function constructProxy(vm, obj, namespace) {
       proxyObj[i] = constructProxy(vm, obj[i], namespace);
     }
     // 代理数组本身（调用数组的一些方法）
-    proxyObj = proxyArr();
+    proxyObj = proxyArr(vm, obj, namespace);
   } else if (obj instanceof Object) {
+    
     proxyObj = constructObjectProxy(vm, obj, namespace);
   } else {
     throw new Error('error');

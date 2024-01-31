@@ -12,6 +12,16 @@
     <div>{{description}}</div>
     <input type="text" v-model="value" placeholder="请输入...">
     <span>{{value}}</span>
+    <ul>
+      <li v-for="(item,index) in list" :key="index">
+        <span>姓名：{{item.name}}</span>
+        <span>年龄：{{item.age}}</span>
+      </li>
+      <!-- <li v-for="(item,index) in list" :key="index">
+        <span>姓名：{{item.name}}</span>
+        <span>年龄：{{item.age}}</span>
+      </li> -->
+    </ul>
   </div>
   <script type="module">
     import MyVue2 from './core/main.js';
@@ -20,7 +30,11 @@
       data: {
         content: 'hello',
         description: 'star say hello',
-        value: '内容'
+        value: '内容',
+        list: [
+          { name: '张三', age: 18 },
+          { name: '李四', age: 19 },
+        ],
       }
     });
   </script>
