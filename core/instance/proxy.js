@@ -4,6 +4,7 @@ function constructObjectProxy(vm, obj, namespace) {
   let proxyObj = {};
   for (let prop in obj) {
     Object.defineProperty(proxyObj, prop, {
+      enumerable: true,
       configurable: true,
       get: function() {
         return obj[prop];
@@ -16,6 +17,7 @@ function constructObjectProxy(vm, obj, namespace) {
       }
     });
     Object.defineProperty(vm, prop, {
+      enumerable: true,
       configurable: true,
       get: () => {
         return obj[prop];

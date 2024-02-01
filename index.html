@@ -5,6 +5,21 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>myVue2</title>
+  <style>
+    img {
+      width: 200px;
+      height: 200px;
+    }
+    .red {
+      color: red;
+    }
+    .bold {
+      font-weight: bold;
+    }
+    .blue {
+      color: blue;
+    }
+  </style>
 </head>
 <body>
   <div id="app">
@@ -22,6 +37,11 @@
         <span>年龄：{{item.age}}</span>
       </li> -->
     </ul>
+    <img :src="imgUrl" alt="猫猫头像">
+    <br>
+    <span v-bind:class="{red: obj.x > 2, bold: obj.y < 2, blue}">这是一句话</span>
+    <br>
+    <button @click="handleClick">按钮</button>
   </div>
   <script type="module">
     import MyVue2 from './core/main.js';
@@ -35,6 +55,17 @@
           { name: '张三', age: 18 },
           { name: '李四', age: 19 },
         ],
+        imgUrl: './cat.jpg',
+        obj: {
+          x: 3,
+          y: 1,
+        },
+        blue: 'blue'
+      },
+      methods: {
+        handleClick() {
+          console.log('点击了按钮');
+        }
       }
     });
   </script>

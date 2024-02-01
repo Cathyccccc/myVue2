@@ -12,6 +12,12 @@ function MixinInit(MyVue2) {
     if (options && options.data) {
       vm._data = constructProxy(vm, options.data, '');
     }
+    if (options && options.methods) {
+      vm._methods = options.methods;
+      for(let prop in options.methods) {
+        vm[prop] = options.methods[prop];
+      }
+    }
     if (options && options.el) {
       let rootDom = document.getElementById(options.el);
       mount(vm, rootDom);

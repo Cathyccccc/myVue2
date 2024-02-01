@@ -37,6 +37,12 @@ export function setValue(obj, attrValueStr, value) {
 }
 
 // 属性合并的意义：传递数据
+/**
+ * 
+ * @param {Object} attr1 
+ * @param {Object} attr2 
+ * @returns {Object}
+ */
 export function mergeAttr(attr1, attr2) {
   if (!attr2) {
     return attr1;
@@ -53,6 +59,15 @@ export function mergeAttr(attr1, attr2) {
   // for(let i = 0; i< attrNames2.length; i++) {
   //   result[attrNames2[i]] = obj2[attrNames2[i]];
   // }
-  // console.log('merge', result, Object.assign({}, obj1, obj2));
+  // // console.log('merge', result, Object.assign({}, obj1, obj2));
+  // return result
 }
 
+export function code(obj1, obj2) {
+  const obj = mergeAttr(obj1, obj2);
+  let str = '';
+  for (let prop in obj) {
+    str += `let ${prop} = ${JSON.stringify(obj[prop])};`
+  }
+  return str;
+}

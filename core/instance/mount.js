@@ -3,6 +3,8 @@ import { prepareRender, getTemplate2Nodes, clearMap, renderData, renderNode } fr
 import { vmodel } from './grammer/vmodel.js';
 import { initVfor } from './grammer/vfor.js';
 import { mergeAttr } from '../util/handleObj.js';
+import { checkBind } from './grammer/vbind.js';
+import { checkVon } from './grammer/von.js';
 
 export function initMount(MyVue2) {
   MyVue2.prototype.$mount = function (el) {
@@ -38,6 +40,9 @@ function constructVNode(vm, elm, parent) {
     }
     // console.log(vnode.env)
   }
+  // 必须有虚拟节点后才能获取到属性
+  checkBind(vm, vnode);
+  checkVon(vm, vnode);
   // console.log(vnode.nodeType, vnode, elm)
   const childs = vnode.nodeType === 0 ? vnode.parent.elm.childNodes : elm.childNodes;
   for (let i = 0; i < childs.length; i++) {
