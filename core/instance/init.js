@@ -12,6 +12,12 @@ function MixinInit(MyVue2) {
     if (options && options.data) {
       vm._data = constructProxy(vm, options.data, '');
     }
+    if (options && options.created) {
+      vm._created = options.created;
+    }
+    if (options && options.computed) {
+      vm._computed = options.computed;
+    }
     if (options && options.methods) {
       vm._methods = options.methods;
       for(let prop in options.methods) {
